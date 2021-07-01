@@ -1,0 +1,10 @@
+----------------------------------------------------------------
+Wed May 12 11:16:35 BST 2021:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.9.1.0 - (1344872): instance a816c00e-0179-6014-0666-000004936cb0 
+on database directory C:\devel\solent2Public\week10\project\service\target\tmp\farmdb  with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@30946e09 
+Loaded from file:/C:/Users/oscar/.m2/repository/org/apache/derby/derby/10.9.1.0/derby-10.9.1.0.jar
+java.vendor=Red Hat, Inc.
+java.runtime.version=11.0.9.1+1-LTS
+user.dir=C:\devel\solent2Public\week10\project\service
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''

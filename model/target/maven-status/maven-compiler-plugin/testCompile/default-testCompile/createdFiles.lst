@@ -1,0 +1,6 @@
+org\solent\com528\project\impl\dao\jaxb\test\StationDAOJaxbLondonTest.class
+org\solent\com528\project\model\dto\test\TicketMachineConfigReplyMessageJaxbTest.class
+org\solent\com528\project\clientservice\impl\test\TicketEncoderImplTest.class
+org\solent\com528\project\impl\dao\jaxb\test\PriceCalculatorDAOJaxbImplTest.class
+org\solent\com528\project\impl\dao\jaxb\test\StationDAOJaxbImplTest.class
+org\solent\com528\project\model\dto\test\TicketModelJaxbTest.class

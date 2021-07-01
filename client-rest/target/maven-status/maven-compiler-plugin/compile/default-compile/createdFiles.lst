@@ -1,0 +1,4 @@
+org\solent\com528\project\impl\service\rest\client\StationServiceRestClientImpl.class
+org\solent\com528\project\impl\service\rest\client\ClientObjectFactoryImpl.class
+org\solent\com528\project\impl\service\rest\client\ConfigurationPoller$1.class
+org\solent\com528\project\impl\service\rest\client\ConfigurationPoller.class

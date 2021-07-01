@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<replyMessage>
+    <code>200</code>
+    <debugMessage>no problem debug message</debugMessage>
+    <ticketMachineConfig>
+        <uuid>967d068d-6a72-4465-9e26-163e79571e8c</uuid>
+        <stationName>Waterloo</stationName>
+        <stationList>
+            <station>
+                <name>London Bridge</name>
+                <zone>1</zone>
+            </station>
+        </stationList>
+        <pricingDetails>
+            <peakPricePerZone>5.0</peakPricePerZone>
+            <offpeakPricePerZone>2.5</offpeakPricePerZone>
+            <priceBandList>
+                <priceBand>
+                    <hour>0</hour>
+                    <minutes>0</minutes>
+                    <rate>PEAK</rate>
+                </priceBand>
+            </priceBandList>
+        </pricingDetails>
+    </ticketMachineConfig>
+</replyMessage>

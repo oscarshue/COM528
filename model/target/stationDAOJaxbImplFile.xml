@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<stationsList>
+    <stationList>
+        <station>
+            <name>Waterloo</name>
+            <zone>1</zone>
+        </station>
+    </stationList>
+</stationsList>

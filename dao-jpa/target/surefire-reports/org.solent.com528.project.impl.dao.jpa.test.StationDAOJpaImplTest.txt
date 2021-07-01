@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: org.solent.com528.project.impl.dao.jpa.test.StationDAOJpaImplTest
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 15.793 sec
