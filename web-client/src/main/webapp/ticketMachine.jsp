@@ -166,8 +166,6 @@
             ticket.setIssueDate(TicketInfo.validFrom);
             ticket.setStartStation(TicketInfo.StartStation);
             ticket.setRate(rate);
-            ticket.setId();
-            ticket.setNumberOfZones(TicketInfo.zonesTravelable);
             String encodedTicket =  TicketEncoderImpl.encodeTicket(ticket);
             String[] encodedTicketSplit = encodedTicket.split("<encryptedHash>");
             encodedTicketSplit = encodedTicketSplit[1].split("</encryptedHash");
