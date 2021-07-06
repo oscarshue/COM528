@@ -4,37 +4,182 @@
     Author     : oscar
 --%>
 
-<%@page import="org.w3c.dom.Document"%>
-<%@page import="java.util.List"%>
-<%@page import="java.util.ArrayList"%>
+<%@page import="org.solent.com528.project.model.dto.TicketMachineConfig"%>
+<%@page import="java.net.URL"%>
 <%@page import="java.util.Set"%>
-<%@page import="java.util.Date"%>
-<%@page import="org.solent.com528.project.impl.webclient.WebClientObjectFactory"%>
+<%@page import="org.solent.com528.project.clientservice.impl.TicketEncoderImpl"%>
+<%@page import="org.solent.com528.project.impl.webclient.TicketInfo"%>
+<%@page import="org.solent.com528.project.model.dto.Rate"%>
+<%@page import="org.solent.com528.project.model.dto.Ticket"%>
+<%@page import="org.solent.com528.project.model.dao.PriceCalculatorDAO"%>
 <%@page import="org.solent.com528.project.model.service.ServiceFacade"%>
+<%@page import="org.solent.com528.project.impl.webclient.WebClientObjectFactory"%>
 <%@page import="org.solent.com528.project.model.dao.StationDAO"%>
 <%@page import="org.solent.com528.project.model.dto.Station"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="org.solent.com528.project.impl.webclient.DateTimeAdapter"%>
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="java.text.DateFormat"%>
+<%@page import="java.util.Date"%>
 
 <!DOCTYPE html>
 <%
-    // accessing service 
+    String errorMessage = "";
     ServiceFacade serviceFacade = (ServiceFacade) WebClientObjectFactory.getServiceFacade();
-    StationDAO stationDAO = serviceFacade.getStationDAO();
-    Set<Integer> zones = stationDAO.getAllZones();
-    List<Station> stationList = new ArrayList<Station>();
-    stationList = stationDAO.findAll();    
-%>
-<%!
-    /*String selectedStation = request.getParameter("startingStationDropDown");
-    List<Station> stationList = new ArrayList<Station>();
-    int selectedStationsZone = 0;
-    public int getStation(){
-        for(Station station : stationList){
-           if(selectedStation.equals(station.getName())){
-               selectedStationsZone = station.getZone();
-           }
+    PriceCalculatorDAO priceCalcDAO = serviceFacade.getPriceCalculatorDAO();
+    String ticketMachineUuid = WebClientObjectFactory.getTicketMachineUuid();
+    if(ticketMachineUuid.isEmpty())
+    {
+        ticketMachineUuid = null;
+    }
+    
+    double offPeakPricePerZone = priceCalcDAO.getOffpeakPricePerZone();
+    double peakPricePerZone = priceCalcDAO.getPeakPricePerZone();
+
+    TicketMachineConfig ticketMachineConf = serviceFacade.getTicketMachineConfig(ticketMachineUuid);
+    List<Station> stationList = new ArrayList();
+    try
+    {
+        stationList = ticketMachineConf.getStationList();
+    }
+    catch(Exception ex)
+    {
+        errorMessage = "Ticket machine UUID is invalid";
+    }
+    String ticketStr = "";
+    String actionStr = request.getParameter("action");
+    if(actionStr == null || actionStr.isEmpty())
+    {
+        actionStr = "";
+    }
+    
+    // pull in standard date format
+    DateFormat df = new SimpleDateFormat(DateTimeAdapter.DATE_FORMAT);
+
+    String validFromStr = request.getParameter("validFrom");
+    if (validFromStr == null || validFromStr.isEmpty()) {
+        validFromStr = df.format(new Date());
+    }
+    
+    String startStationStr = "UNDEFINED";
+    if(!stationList.isEmpty())
+    {
+        ticketMachineConf.getStationName();
+        startStationStr = ticketMachineConf.getStationName();
+    }
+    
+
+    String endStationStr = request.getParameter("endStation");
+    if (endStationStr == null || endStationStr.isEmpty()) {
+        endStationStr = "UNDEFINED";
+    }
+    String priceStr = request.getParameter("price");
+    if (priceStr == null || priceStr.isEmpty()) {
+        priceStr = "00.00";
+    }
+    String cardNoStr = request.getParameter("cardNo");
+    if(cardNoStr == null || cardNoStr.isEmpty()){
+        cardNoStr ="";
+    }
+
+    if (startStationStr != "UNDEFINED" && endStationStr != "UNDEFINED") {
+            Date validFromDate =null;
+            boolean dateTimeValid = false;
+            try
+            {
+                validFromDate = df.parse(validFromStr);
+                dateTimeValid = true;
+            }
+            catch(Exception ex)
+            {
+                errorMessage = "The Date Time value is invalid";
+            }
+            
+            if(dateTimeValid)
+            {
+            boolean stationExists = false;
+            double pricePerZone = priceCalcDAO.getPricePerZone(validFromDate);
+            Station endStation = null;
+
+            for(Station station : stationList)
+            {
+                if(station.getName().equals(endStationStr))
+                {
+                    endStation = station;
+                    stationExists = true;
+                }
+            }
+
+            if(stationExists)
+            {
+                int startStationZone =  ticketMachineConf.getStationZone();
+                int endStationZone =  endStation.getZone();
+                int zoneDif = 1;
+                if(startStationZone > endStationZone)
+                {
+                     zoneDif = startStationZone - endStationZone;
+                }
+                else if(startStationZone < endStationZone)
+                {
+                      zoneDif = endStationZone - startStationZone;
+                }
+                if(zoneDif == 0){ zoneDif = 1; }
+                double price = zoneDif * pricePerZone;
+                priceStr = "£"+price;
+                
+                TicketInfo.StartStation = startStationStr;
+                TicketInfo.validFrom = validFromDate;
+                TicketInfo.price = price;
+                TicketInfo.zonesTravelable = zoneDif;
+            }
+            else
+            {
+                errorMessage = "this station doesn't exsist, or has an invalid station UUID.";
+            }
+        }       
+
+    }
+
+    if(actionStr.equals("buyTicket"))
+    {
+        long cardNo = 0;
+        try{
+            cardNo = Long.parseLong(cardNoStr);
         }
-        return selectedStationsZone;
-    }*/
+        catch(Exception ex)
+        {
+            errorMessage = "card is invalid parse error";
+        }
+        boolean cardIsReal = false;
+        if(cardNoStr.length() == 16 && cardNo != 0)
+        {
+            cardIsReal = true;
+        }
+
+        if(cardIsReal)
+        {
+            Rate rate = priceCalcDAO.getRate(TicketInfo.validFrom);
+            Ticket ticket = new Ticket();
+            ticket.setCost(TicketInfo.price);
+            ticket.setIssueDate(TicketInfo.validFrom);
+            ticket.setStartStation(TicketInfo.StartStation);
+            ticket.setRate(rate);
+            ticket.setId();
+            ticket.setNumberOfZones(TicketInfo.zonesTravelable);
+            String encodedTicket =  TicketEncoderImpl.encodeTicket(ticket);
+            String[] encodedTicketSplit = encodedTicket.split("<encryptedHash>");
+            encodedTicketSplit = encodedTicketSplit[1].split("</encryptedHash");
+            String hash = encodedTicketSplit[0];
+            ticket.setEncryptedHash(hash);
+
+            ticketStr = encodedTicket;
+        }
+        else
+        {
+            errorMessage = "card is invalid";
+        }
+    }
 %>
 <html>
     <head>
@@ -42,45 +187,57 @@
         <title>Ticket Machine</title>
     </head>
     <body style="text-align: center;">
-        <h1>Create a new ticket</h1>
-        <form action="#">
-            <p style="display: inline-block; width: 110px;">Starting Station: </p>
-            <select id="startingStationDropDown" name="startingStationDropDown" style="margin-left: 20px; width: 200px;">
-                <option selected>Select a Starting Station</option>
-                <%
-                    for (Station station : stationList) {
-                %>
-                    <option id="selectedStartingStation"><%=station.getName()%></option>
-                <%
-                    }
-                %>
-            </select><br/>
-            
-            <p style="display: inline-block; width: 110px;">Starting Zone: </p>
-            <input id="startingZoneInput" type="number" value="" style="margin-left: 20px; width: 192px;"/><br/>
-            
-            <p style="display: inline-block; width: 110px;">Ending Station: </p>
-            <select id="endingStationInput" name="endingStationInput" style="margin-left: 20px; width: 200px;">
-                <option selected>Select a Destination Station</option>
-                <%
-                    for (Station station : stationList) {
-                %>
-                    <option id="selectedEndingStation"><%=station.getName()%></option>
-                <%
-                    }
-                %>
-            </select><br/>
-                
-            <p style="display: inline-block; width: 110px;">Ending Zone: </p>
-            <input id="endingZoneInput" type="number" style="margin-left: 20px; width: 192px;"/><br/>
-            
-            <button style="margin: 25px 0px 0px 10px;" type="submit">Create Ticket</button>            
+        <h1>Current Starting Station: <%=startStationStr%></h1>
+        <h1>Create and Purchase a New Ticket</h1>
+        <!-- print error message if there is one -->
+        <div style="color:red;"><%=errorMessage%></div>
+
+        <form action="./ticketMachine.jsp"  method="post">
+            <table style="margin-left: auto; margin-right: auto; width: 35%;">
+                <tr>
+                    <td style="text-align: left;">Destination Station:</td>
+                    <td style="text-align: left;">
+                         <select name="endStation" id="cboEndStation" onchnage="submit">
+                             <option value="UNDEFINED">--Select--</option>
+                             <%
+                                for (Station station : stationList) {
+                            %>
+                           <option value="<%=station.getName()%>"><%=station.getName()%></option>
+                            <%
+                                }
+                            %>
+                            <option value="UNDEFINED">--Select--</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">Time Ticket is Valid From:</td>
+                    <td style="text-align: left;">
+                        <input type="text" name="validFrom" value="<%=validFromStr%>">
+                    </td>
+                </tr>
+            </table>
+            <button type="submit" style="margin-top: 15px;">Configure Ticket Price</button>
+        </form> 
+        <h1>Payment Details</h1>
+        <form action="./ticketMachine.jsp"  method="get">
+            <table style="margin-left: auto; margin-right: auto; width: 35%;">
+                <tr>
+                    <td style="text-align: left;">Ticket Price:</td>
+                    <td style="text-align: left;">
+                        <input type="text" name="price" value="<%=priceStr%>" readonly>
+                    </td>
+                </tr>                
+                 <tr>
+                    <td style="text-align: left;">Enter Your 16-Digit Card Number:</td>
+                    <td style="text-align: left;">
+                        <input type="text" name="cardNo" value="<%=cardNoStr%>">
+                    </td>
+                </tr>
+            </table>
+            <button type="submit" name="action" value="buyTicket" style="margin-top: 15px;">Buy Ticket</button>
         </form>
-        <h1 style="margin-top: 50px;">Ticket XML</h1>
-        <div>
-            <textarea id="ticketXML" name="ticketXML" style="width: 600px;height: 175px; resize: none;">
-                
-            </textarea>
-        </div>
+        <h2>Your Ticket XML</h2>
+        <textarea id="ticketTextArea" rows="15" cols="150" readonly><%=ticketStr%></textarea>
     </body>
 </html>

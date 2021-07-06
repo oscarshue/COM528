@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: org.solent.com528.project.impl.service.rest.client.test.RestClientDAOServiceFacadeTest
 -------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.2 sec - in org.solent.com528.project.impl.service.rest.client.test.RestClientDAOServiceFacadeTest
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.691 sec - in org.solent.com528.project.impl.service.rest.client.test.RestClientDAOServiceFacadeTest
