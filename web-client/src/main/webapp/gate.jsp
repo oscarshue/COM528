@@ -88,9 +88,9 @@
             <div style="color:red;"><%=errorMessage%></div>
             <h1>Ticket Gate</h1>
             <% if (isValid) { %>
-                <div style="color:green; font-size:64px; text-align: center;">GATE OPEN</div>
+                <div style="color:green; font-size:50px; text-align: center;">GATE OPEN</div>
             <%  } else {  %>
-                <div style="color:red; font-size:64px; text-align: center;">GATE LOCKED</div>
+                <div style="color:red; font-size:50px; text-align: center;">GATE LOCKED</div>
             <% } %>
         </div>
         <form action="./gate.jsp"  method="post" style="width: 95%; margin-left: auto; margin-right: auto;">
