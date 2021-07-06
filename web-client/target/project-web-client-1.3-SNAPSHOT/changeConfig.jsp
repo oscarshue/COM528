@@ -50,7 +50,7 @@
                 <td></td>
             </tr>
             <tr>
-                <td>Last Successfull Update </td>
+                <td>Last Successful Update </td>
                 <td><%=lastUpdateStr %></td>
                 <td></td>
             </tr>

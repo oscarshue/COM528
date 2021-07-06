@@ -54,7 +54,6 @@
         actionStr = "";
     }
     
-    // pull in standard date format
     DateFormat df = new SimpleDateFormat(DateTimeAdapter.DATE_FORMAT);
 
     String validFromStr = request.getParameter("validFrom");
@@ -124,7 +123,9 @@
                 {
                       zoneDif = endStationZone - startStationZone;
                 }
-                if(zoneDif == 0){ zoneDif = 1; }
+                if(zoneDif == 0){ 
+                    zoneDif = 1; 
+                }
                 double price = zoneDif * pricePerZone;
                 priceStr = "£"+price;
                 
@@ -187,18 +188,22 @@
         <title>Ticket Machine</title>
     </head>
     <body style="text-align: center;">
-        <h1>Current Starting Station: <%=startStationStr%></h1>
-        <h1>Create and Purchase a New Ticket</h1>
-        <!-- print error message if there is one -->
+        <!-- Below div is a placeholder for error messages if an error occurs. -->
         <div style="color:red;"><%=errorMessage%></div>
-
+        <h1>Create and Purchase a New Ticket</h1>        
         <form action="./ticketMachine.jsp"  method="post">
             <table style="margin-left: auto; margin-right: auto; width: 35%;">
                 <tr>
+                    <td style="text-align: left;">Starting Station:</td>
+                    <td style="text-align: left;">
+                        <input style="text-align: left;" readonly value="<%=startStationStr%>"/>
+                    </td>
+                </tr>
+                <tr>
                     <td style="text-align: left;">Destination Station:</td>
                     <td style="text-align: left;">
-                         <select name="endStation" id="cboEndStation" onchnage="submit">
-                             <option value="UNDEFINED">--Select--</option>
+                         <select name="endStation" id="endStation" onchange="submit">
+                             <option value="UNDEFINED">Select a Station</option>
                              <%
                                 for (Station station : stationList) {
                             %>
@@ -206,12 +211,12 @@
                             <%
                                 }
                             %>
-                            <option value="UNDEFINED">--Select--</option>
+                            <option value="UNDEFINED">Select a Station</option>
                         </select>
                     </td>
                 </tr>
                 <tr>
-                    <td style="text-align: left;">Time Ticket is Valid From:</td>
+                    <td style="text-align: left;">Time Your Ticket is Valid From:</td>
                     <td style="text-align: left;">
                         <input type="text" name="validFrom" value="<%=validFromStr%>">
                     </td>
